@@ -1,0 +1,7 @@
+speedtest-cli
+python-daemon==2.1.2
+python-dateutil>=2.6.0
+flask
+schedule
+redislite>=3.0
+redis-collections>=0.4.2

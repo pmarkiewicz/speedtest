@@ -33,12 +33,12 @@ def get_speed():
     return info
 
 
-def job():
+def save_speed_data():
     data.append(get_speed())
 
 
-def run_job():
-    job()
+def run_jobs():
+    save_speed_data()
     while True:
         schedule.run_pending()
         time.sleep(1)
@@ -48,7 +48,7 @@ def start_daemon():
         umask=0o002,
         pidfile=pidfile.TimeoutPIDLockFile(PID_FILE),
         ) as context:
-            run_job()
+            run_jobs()
 
 
 if __name__ == "__main__":
@@ -57,10 +57,10 @@ if __name__ == "__main__":
     parser.add_argument('-d', '--daemon', action='store_true', default=False, help='Run as a daemon')
 
     args = parser.parse_args()
-    schedule.every(10).minutes.do(job)
+    schedule.every(10).minutes.do(save_speed_data)
 
     if args.daemon:
         print('run as daemon')
         start_daemon()
     else:
-        run_job()
+        run_jobs()

@@ -11,7 +11,7 @@ import logging
 
 MB = 1024.0 * 1024.0
 PID_FILE = '/tmp/speedtest.pid'
-LOG_FILE = "/var/log/speedtest.log"
+LOG_FILE = "/tmp/speedtest.log"
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

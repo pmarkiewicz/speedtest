@@ -22,7 +22,8 @@ if __name__ == "__main__":
 
     slave = '{} {}'.format(ipaddress, port)
     print slave
-    rc = redislite.StrictRedis(serverconfig={'slaveof': slave})
+    #rc = redislite.StrictRedis(serverconfig={'slaveof': slave})
+    rc = redislite.StrictRedis(host = ipaddress, port = port)
     lst = List(redis=rc, key='speed')
 
     print "Keys in redis: ", rc.keys()

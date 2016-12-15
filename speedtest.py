@@ -47,9 +47,11 @@ def save_speed_data():
 
 def aggregate_hours():
     settings['last_hour'] = datetime.now().strftime('%Y%m%d%H')
+    logger.info('hourly')
 
 def aggregate_days():
     settings['last_hour'] = datetime.now().strftime('%Y%m%d')
+    logger.info('daily')
 
 def run_jobs():
     save_speed_data()
@@ -63,6 +65,8 @@ def start_daemon():
             run_jobs()
         except Exception as ex:
             logger.error(ex)
+        finally:
+            redis.shutdown()
 
 if __name__ == "__main__":
     print('redis')

@@ -20,6 +20,8 @@ handler = logging.FileHandler(LOG_FILE)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+is_daemon = False
+
 redis = redislite.StrictRedis('/tmp/redis.db', serverconfig={'port': '8002'})
 data = redis_collections.List(redis=redis, key='speed')
 settings = redis_collections.Dict(redis=redis, key='settings')
@@ -43,30 +45,41 @@ def get_speed():
 
 
 def save_speed_data():
-    data.append(get_speed())
+    try:
+        data.append(get_speed())
+    except Exception as ex:
+        if not is_daemon:
+            print (ex)
+        logger.error(ex)
 
 def aggregate_hours():
-    settings['last_hour'] = datetime.now().strftime('%Y%m%d%H')
-    logger.info('hourly')
+    try:
+        settings['last_hour'] = datetime.now().strftime('%Y%m%d%H')
+        logger.info('hourly')
+    except Exception as ex:
+        if not is_daemon:
+            print (ex)
+        logger.error(ex)
 
 def aggregate_days():
-    settings['last_hour'] = datetime.now().strftime('%Y%m%d')
-    logger.info('daily')
+    try:
+        settings['last_hour'] = datetime.now().strftime('%Y%m%d')
+        logger.info('daily')
+    except Exception as ex:
+        if not is_daemon:
+            print (ex)
+        logger.error(ex)
 
 def run_jobs():
     save_speed_data()
-    while True:
+    while Tr['last_hour'] = datetime.now().strftime('%Y%m%d')
+    logger.iue:
         schedule.run_pending()
         time.sleep(1)
 
 def start_daemon():
     with daemon.DaemonContext(umask=0o002, pidfile=pidfile.TimeoutPIDLockFile(PID_FILE)) as context:
-        try:
-            run_jobs()
-        except Exception as ex:
-            logger.error(ex)
-        finally:
-            redis.shutdown()
+        run_jobs()
 
 if __name__ == "__main__":
     print('redis')
@@ -78,8 +91,16 @@ if __name__ == "__main__":
     schedule.every(1).hour.do(aggregate_hours)
     schedule.every(1).day.do(aggregate_days)
 
-    if args.daemon:
-        print('run as daemon')
-        start_daemon()
-    else:
-        run_jobs()
+    try:
+        if args.daemon:
+            print('run as daemon')
+            is_daemon = True
+            start_daemon()
+        else:
+            run_jobs()
+    except Exception as ex:
+        if not is_daemon:
+            print (ex)
+        logger.error(ex)
+    finally:
+        redis.shutdown()

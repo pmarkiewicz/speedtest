@@ -1,6 +1,7 @@
 import argparse
 import redislite
-from redis_collections import List
+from redis_collections import List, Dict
+from datetime import datetime
 
 import processor
 
@@ -29,3 +30,11 @@ if __name__ == "__main__":
     print "Keys in redis: ", rc.keys()
     print "No of items in redis: ", len(lst)
     print "Weekly speed\n", processor.average_speed_weekly(lst)
+
+    settings = Dict(redis=rc, key='settings')
+    if settings.get('last_test'):
+        print 'Last test: ', settings['last_test']
+    else:
+        print 'No last run'
+
+    settings['last_test'] = datetime.now()

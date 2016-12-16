@@ -6,6 +6,7 @@ import argparse
 import redislite
 import redis_collections
 import daemon
+from datetime import datetime
 from daemon import pidfile
 import logging
 

@@ -72,8 +72,7 @@ def aggregate_days():
 
 def run_jobs():
     save_speed_data()
-    while Tr['last_hour'] = datetime.now().strftime('%Y%m%d')
-    logger.iue:
+    while True:
         schedule.run_pending()
         time.sleep(1)
 

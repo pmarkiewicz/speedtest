@@ -88,3 +88,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+speedtest.pid
+speedtest.log
+speedtest.db
+speedtest.db.settings

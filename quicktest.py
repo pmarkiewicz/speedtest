@@ -38,3 +38,6 @@ if __name__ == "__main__":
         print 'No last run'
 
     settings['last_test'] = datetime.now()
+
+    print "Last hour aggr: ", settings.get('last_hour') if settings.get('last_hour') else 'not yet'
+    print lst[-2:]

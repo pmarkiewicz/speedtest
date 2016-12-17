@@ -9,10 +9,13 @@ import daemon
 from datetime import datetime
 from daemon import pidfile
 import logging
+from os import path
 
 MB = 1024.0 * 1024.0
-PID_FILE = '/tmp/speedtest.pid'
-LOG_FILE = "/tmp/speedtest.log"
+LOCAL_DIR = path.dirname(path.abspath(__file__))
+PID_FILE = path.join(LOCAL_DIR, 'speedtest.pid')
+LOG_FILE = path.join(LOCAL_DIR, 'speedtest.log')
+DB_FILE = path.join(LOCAL_DIR, 'speedtest.db')
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -23,7 +26,7 @@ logger.addHandler(handler)
 
 is_daemon = False
 
-redis = redislite.StrictRedis('/tmp/redis.db', serverconfig={'port': '8002'})
+redis = redislite.StrictRedis(DB_FILE, serverconfig={'port': '8002'})
 data = redis_collections.List(redis=redis, key='speed')
 settings = redis_collections.Dict(redis=redis, key='settings')
 
@@ -64,7 +67,7 @@ def aggregate_hours():
 
 def aggregate_days():
     try:
-        settings['last_hour'] = datetime.now().strftime('%Y%m%d')
+        settings['last_day'] = datetime.now().strftime('%Y%m%d')
         logger.info('daily')
     except Exception as ex:
         if not is_daemon:
@@ -78,7 +81,9 @@ def run_jobs():
         time.sleep(1)
 
 def start_daemon():
-    with daemon.DaemonContext(umask=0o002, pidfile=pidfile.TimeoutPIDLockFile(PID_FILE)) as context:
+    with daemon.DaemonContext(umask=0o002,
+                            pidfile=pidfile.TimeoutPIDLockFile(PID_FILE),
+                            working_directory=LOCAL_DIR) as context:
         run_jobs()
 
 if __name__ == "__main__":

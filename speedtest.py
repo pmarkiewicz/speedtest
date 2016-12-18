@@ -17,7 +17,7 @@ PID_FILE = path.join(LOCAL_DIR, 'speedtest.pid')
 LOG_FILE = path.join(LOCAL_DIR, 'speedtest.log')
 DB_FILE = path.join(LOCAL_DIR, 'speedtest.db')
 
-logger = logging.getLogger(__name__)
+logger = logging.getLogger('speedtest')
 logger.setLevel(logging.INFO)
 formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
 handler = logging.FileHandler(LOG_FILE)
@@ -81,13 +81,14 @@ def run_jobs():
         time.sleep(1)
 
 def start_daemon():
-    with daemon.DaemonContext(umask=0o002,
+    with daemon.DaemonContext(umask=0o002,  # -rw-r--r--
                             pidfile=pidfile.TimeoutPIDLockFile(PID_FILE),
                             working_directory=LOCAL_DIR) as context:
         run_jobs()
 
 if __name__ == "__main__":
     print('redis')
+    logger.info('speedtest start')
     parser = argparse.ArgumentParser(description="Speed test")
     parser.add_argument('-d', '--daemon', action='store_true', default=False, help='Run as a daemon')
 

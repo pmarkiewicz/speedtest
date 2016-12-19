@@ -37,8 +37,8 @@ def get_splitted_output(cmd):
 def get_speed():
     headers = get_splitted_output(['speedtest', '--csv-header'])
     try:
-		speed = get_splitted_output(['speedtest', '--csv'])
-	except Exception as ex:
+	speed = get_splitted_output(['speedtest', '--csv'])
+    except Exception as ex:
         if not is_daemon:
             print (ex)
         logger.error(ex)

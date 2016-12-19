@@ -1,6 +1,8 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 .idea/
+.idea/*
+.idea/workspace.xml
 *.py[cod]
 *$py.class
 
@@ -89,10 +91,10 @@ ENV/
 # Rope project settings
 .ropeproject
 
+<<<<<<< HEAD
 
 
 speedtest.pid
 speedtest.log
 speedtest.db
 speedtest.db.settings
-

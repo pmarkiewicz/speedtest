@@ -16,6 +16,7 @@ LOCAL_DIR = path.dirname(path.abspath(__file__))
 PID_FILE = path.join(LOCAL_DIR, 'speedtest.pid')
 LOG_FILE = path.join(LOCAL_DIR, 'speedtest.log')
 DB_FILE = path.join(LOCAL_DIR, 'speedtest.db')
+PORT = 8002
 
 logger = logging.getLogger('speedtest')
 logger.setLevel(logging.INFO)
@@ -26,7 +27,7 @@ logger.addHandler(handler)
 
 is_daemon = False
 
-redis = redislite.StrictRedis(DB_FILE, serverconfig={'port': '8002'})
+redis = redislite.StrictRedis(DB_FILE, serverconfig={'port': PORT})
 data = redis_collections.List(redis=redis, key='speed')
 settings = redis_collections.Dict(redis=redis, key='settings')
 
@@ -35,10 +36,12 @@ def get_splitted_output(cmd):
 
 def get_speed():
     headers = get_splitted_output(['speedtest', '--csv-header'])
-    speed = get_splitted_output(['speedtest', '--csv'])
-
-    if len(headers) != len(speed):
-        print("BAD")
+    try:
+		speed = get_splitted_output(['speedtest', '--csv'])
+	except Exception as ex:
+        if not is_daemon:
+            print (ex)
+        logger.error(ex)
 
     info = { key.lower(): val for key, val in zip(headers, speed) }
     info['timestamp'] = dateutil.parser.parse(info['timestamp'])

@@ -6,10 +6,12 @@ import argparse
 import redislite
 import redis_collections
 import daemon
-from datetime import datetime
+from datetime import datetime, timedelta
 from daemon import pidfile
 import logging
 from os import path
+
+from processor import *
 
 MB = 1024.0 * 1024.0
 LOCAL_DIR = path.dirname(path.abspath(__file__))
@@ -29,6 +31,7 @@ is_daemon = False
 
 redis = redislite.StrictRedis(DB_FILE, serverconfig={'port': PORT})
 data = redis_collections.List(redis=redis, key='speed')
+hourly = redis_collections.List(redis=redis, key='hourly')
 settings = redis_collections.Dict(redis=redis, key='settings')
 
 def get_splitted_output(cmd):
@@ -61,7 +64,10 @@ def save_speed_data():
 
 def aggregate_hours():
     try:
-        settings['last_hour'] = datetime.now().strftime('%Y%m%d%H')
+        last_hour = settings.get('last_hour', datetime.min) - timedelta(hours=2)
+        items = ([)i for i in data if i['timestamp'] >= last_hour)
+        hourly.extend(average_speed_hourly(items).values())
+        settings['last_hour'] = datetime.now()
         logger.info('hourly')
     except Exception as ex:
         if not is_daemon:

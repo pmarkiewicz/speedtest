@@ -65,7 +65,7 @@ def save_speed_data():
 def aggregate_hours():
     try:
         last_hour = settings.get('last_hour', datetime.min) - timedelta(hours=2)
-        items = ([)i for i in data if i['timestamp'] >= last_hour)
+        items = (i for i in data if i['timestamp'] >= last_hour)
         hourly.extend(average_speed_hourly(items).values())
         settings['last_hour'] = datetime.now()
         logger.info('hourly')

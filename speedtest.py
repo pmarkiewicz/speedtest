@@ -19,10 +19,11 @@ PID_FILE = path.join(LOCAL_DIR, 'speedtest.pid')
 LOG_FILE = path.join(LOCAL_DIR, 'speedtest.log')
 DB_FILE = path.join(LOCAL_DIR, 'speedtest.db')
 PORT = 8002
+MIN_DATETIME = datetime(2016, 1, 1)
 
 logger = logging.getLogger('speedtest')
-logger.setLevel(logging.INFO)
-formatter = logging.Formatter("%(asctime)s - %(name)s - %(levelname)s - %(message)s")
+logger.setLevel(logging.DEBUG)
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s")
 handler = logging.FileHandler(LOG_FILE)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
@@ -64,7 +65,7 @@ def save_speed_data():
 
 def aggregate_hours():
     try:
-        last_hour = settings.get('last_hour', datetime.min) - timedelta(hours=2)
+        last_hour = settings.get('last_hour', MIN_DATETIME) - timedelta(hours=2)
         items = (i for i in data if i['timestamp'] >= last_hour)
         hourly.extend(average_speed_hourly(items).values())
         settings['last_hour'] = datetime.now()

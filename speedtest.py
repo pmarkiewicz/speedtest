@@ -87,13 +87,8 @@ def aggregate_hours():
 
 @catch_exceptions(logger=logger)
 def aggregate_days():
-    try:
-        settings['last_day'] = datetime.now().strftime('%Y%m%d')
-        logger.info('daily')
-    except Exception as ex:
-        if not is_daemon:
-            print (ex)
-        logger.error(ex)
+    settings['last_day'] = datetime.now().strftime('%Y%m%d')
+    logger.info('daily')
 
 def run_jobs():
     save_speed_data()
@@ -115,7 +110,9 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     schedule.every(10).minutes.do(save_speed_data)
+    time.sleep(1)
     schedule.every().hour.do(aggregate_hours)
+    time.sleep(1)
     schedule.every().day.do(aggregate_days)
 
     try:

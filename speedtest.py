@@ -12,6 +12,7 @@ import logging
 from os import path
 
 from processor import *
+from helpers import *
 
 MB = 1024.0 * 1024.0
 LOCAL_DIR = path.dirname(path.abspath(__file__))
@@ -83,6 +84,7 @@ def aggregate_hours():
             print (ex)
         logger.error(ex)
 
+@catch_exceptions(logger=logger)
 def aggregate_days():
     try:
         settings['last_day'] = datetime.now().strftime('%Y%m%d')
@@ -112,8 +114,8 @@ if __name__ == "__main__":
 
     args = parser.parse_args()
     schedule.every(10).minutes.do(save_speed_data)
-    schedule.every(1).hour.do(aggregate_hours)
-    schedule.every(1).day.do(aggregate_days)
+    schedule.every().hour.do(aggregate_hours)
+    schedule.every().day.do(aggregate_days)
 
     try:
         if args.daemon:

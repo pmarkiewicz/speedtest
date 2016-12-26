@@ -67,19 +67,20 @@ def save_speed_data():
 def aggregate_hours():
     try:
 		with open('hr.log', 'a') as f:
-			f.write('aggregate_hours 1')
+			f.write(str(datetime.now()))
+			f.write('\taggregate_hours 1\t')
         last_hour = settings.get('last_hour', MIN_DATETIME) - timedelta(hours=2)
         items = (i for i in data if i['timestamp'] >= last_hour)
         hourly.extend(average_speed_hourly(items).values())
 		with open('hr.log', 'a') as f:
-			f.write('aggregate_hours 2')
+			f.write('aggregate_hours 2\t')
         settings['last_hour'] = datetime.now()
         logger.info('hourly')
 		with open('hr.log', 'a') as f:
-			f.write('aggregate_hours 3')
+			f.write('aggregate_hours 3\n')
     except Exception as ex:
 		with open('hr.log', 'a') as f:
-			f.write('aggregate_hours ex')
+			f.write('aggregate_hours ex\n')
         if not is_daemon:
             print (ex)
         logger.error(ex)

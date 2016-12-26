@@ -85,7 +85,7 @@ def aggregate_hours():
             print (ex)
         logger.error(ex)
 
-@catch_exceptions
+@catch_exceptions(logger=logger)
 def aggregate_days():
     try:
         settings['last_day'] = datetime.now().strftime('%Y%m%d')

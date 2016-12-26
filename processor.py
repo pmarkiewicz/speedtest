@@ -22,6 +22,7 @@ def average_speed(grouping_fn, iterable):
     avg[k]['upload'] = sum((i['upload'] for i in v)) / l
     avg[k]['download'] = sum((i['download'] for i in v)) / l
     avg[k]['ping'] = sum((i['ping'] for i in v)) / l
+    avg[k]['hour'] = k
 
   return avg
 
